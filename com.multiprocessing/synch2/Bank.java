@@ -27,6 +27,8 @@ public class Bank
     * @param to the account to transfer to
     * @param amount the amount to transfer
     */
+   
+   //synchronized 关键字，修饰方法或方法块，还可以修饰object对象
    public synchronized void transfer(int from, int to, double amount) throws InterruptedException
    {
       while (accounts[from] < amount)

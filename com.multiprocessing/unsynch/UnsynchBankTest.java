@@ -7,8 +7,8 @@ package unsynch;
  */
 public class UnsynchBankTest
 {
-   public static final int NACCOUNTS = 100;
-   public static final double INITIAL_BALANCE = 1000;
+   public static final int NACCOUNTS = 100;  //100个银行账户
+   public static final double INITIAL_BALANCE = 1000;  //每个账户初始金额都是1000元
 
    public static void main(String[] args)
    {
@@ -16,7 +16,7 @@ public class UnsynchBankTest
       int i;
       for (i = 0; i < NACCOUNTS; i++)
       {
-         TransferRunnable r = new TransferRunnable(b, i, INITIAL_BALANCE);
+         TransferRunnable r = new TransferRunnable(b, i, INITIAL_BALANCE); //i 0-->99
          Thread t = new Thread(r);
          t.start();
       }

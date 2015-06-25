@@ -18,13 +18,14 @@ public class BlockingQueueTest
       System.out.print("Enter keyword (e.g. volatile): ");
       String keyword = in.nextLine();
 
-      final int FILE_QUEUE_SIZE = 10;
-      final int SEARCH_THREADS = 100;
+      final int FILE_QUEUE_SIZE = 10;   //阻塞队列的长度为10
+      final int SEARCH_THREADS = 100;   // 搜索线程的数量为100
 
       BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
 
       FileEnumerationTask enumerator = new FileEnumerationTask(queue, new File(directory));
-      new Thread(enumerator).start();
+      new Thread(enumerator).start();  // 生产者线程枚举搜索目录下所有的文件，将每个file对象插入到blockingQueue中
+      // 新建100个搜索线程来进行搜索
       for (int i = 1; i <= SEARCH_THREADS; i++)
          new Thread(new SearchTask(queue, keyword)).start();
    }
@@ -35,7 +36,7 @@ public class BlockingQueueTest
  */
 class FileEnumerationTask implements Runnable
 {
-   public static File DUMMY = new File("");
+   public static File DUMMY = new File("");  //虚拟file对象，用于终止搜索任务
    private BlockingQueue<File> queue;
    private File startingDirectory;
 
@@ -55,7 +56,7 @@ class FileEnumerationTask implements Runnable
       try
       {
          enumerate(startingDirectory);
-         queue.put(DUMMY);
+         queue.put(DUMMY);   //往阻塞队列加入虚拟file对象，用于终止搜索任务
       }
       catch (InterruptedException e)
       {
@@ -71,7 +72,7 @@ class FileEnumerationTask implements Runnable
       File[] files = directory.listFiles();
       for (File file : files)
       {
-         if (file.isDirectory()) enumerate(file);
+         if (file.isDirectory()) enumerate(file);  //递归操作目录
          else queue.put(file);
       }
    }
@@ -92,7 +93,7 @@ class SearchTask implements Runnable
     */
    public SearchTask(BlockingQueue<File> queue, String keyword)
    {
-      this.queue = queue;
+      this.queue = queue;  //这儿的queue与生产者的queue为同一个对象
       this.keyword = keyword;
    }
 
@@ -107,7 +108,7 @@ class SearchTask implements Runnable
             if (file == FileEnumerationTask.DUMMY)
             {
                queue.put(file);
-               done = true;
+               done = true;  //检测到虚拟file对象，终止搜索任务
             }
             else search(file);
          }
